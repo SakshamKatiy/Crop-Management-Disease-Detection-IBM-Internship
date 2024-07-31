@@ -1,33 +1,39 @@
 import streamlit as st
 from PIL import Image
+from datetime import datetime
+import pandas as pd
+from sqlalchemy import create_engine, Column, String, Date, Text, Integer
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-st.set_page_config(page_title="Crop Management and Disease Detection", page_icon=":seedling:", layout="wide")
+engine = create_engine('sqlite:///crop_management.db')
+Base = declarative_base()
+
+class CropData(Base):
+    __tablename__ = 'crop_data'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    crop_name = Column(String)
+    growth_stage = Column(String)
+    date = Column(Date)
+    notes = Column(Text)
+
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
+session = Session()
+
+st.set_page_config(page_title="Crop Disease Detection", page_icon=":seedling:", layout="wide")
 
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Home", "Crop Management", "Disease Detection"])
+page = st.sidebar.radio("Go to", ["Home", "Disease Detection"])
 
 logo = Image.open("logo.jpeg")  
 st.image(logo, width=100)
-st.title("Crop Management and Disease Detection")
+st.title("Crop Disease Detection")
 
 # Home Page
 if page == "Home":
-    st.header("Welcome to the Crop Management and Disease Detection System")
-    st.write("This application helps in managing crops efficiently and detecting diseases early.")
-
-# Crop Management Page
-elif page == "Crop Management":
-    st.header("Crop Management")
-    st.write("Here you can find resources and tools to manage your crops efficiently.")
-
-    st.subheader("Soil Health")
-    st.write("Information and tools to assess and improve soil health.")
-
-    st.subheader("Water Management")
-    st.write("Guidelines for efficient water usage and irrigation techniques.")
-
-    st.subheader("Fertilization")
-    st.write("Best practices for fertilization to ensure optimal crop growth.")
+    st.header("Welcome to the Crop Disease Detection System")
+    st.write("This application helps in detecting diseases early.")
 
 # Disease Detection Page
 elif page == "Disease Detection":
@@ -46,6 +52,5 @@ elif page == "Disease Detection":
 
 # Footer
 st.sidebar.markdown("### The Bugs")
-
 if __name__ == "__main__":
     st.write("Developed by The Bugs | © 2024")
